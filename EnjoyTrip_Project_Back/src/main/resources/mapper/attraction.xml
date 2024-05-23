@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.enjoytrip.domain.attraction.mapper.AttractionMapper">
+
+    <select id="loadAttraction">
+        SELECT *
+        FROM attraction_description ades
+        INNER JOIN attraction_info ai ON ades.content_id = ai.content_id
+        <if test="userId != null">
+            LEFT JOIN wishlist wl ON ai.content_id = wl.content_id AND wl.user_id = #{userId}
+        </if>
+        <where>
+            <if test="typeCode != 0">
+                ai.content_type_id = #{typeCode}
+            </if>
+            <if test="sidoCode != 0">
+                <choose>
+                    <when test="typeCode != 0">
+                        AND
+                    </when>
+                </choose>
+                ai.sido_code = #{sidoCode}
+            </if>
+            AND ai.title LIKE CONCAT('%', #{title}, '%')
+        </where>
+        LIMIT #{page}, #{size}
+    </select>
+
+
+    <select id="pickAttraction">
+        SELECT *
+        FROM attraction_info ai
+                 INNER JOIN attraction_description ades ON ai.content_id = ades.content_id
+        WHERE ai.content_id = #{contentId}
+    </select>
+
+    <select id="getGugun">
+        SELECT *
+        FROM gugun
+        WHERE sido_code = #{sido}
+    </select>
+
+    <insert id="addWish">
+        INSERT INTO wishlist (user_id, content_id)
+        VALUES (#{userId}, #{contentId})
+    </insert>
+
+    <select id="getWishList">
+        SELECT *
+        FROM wishlist
+        WHERE user_id = #{userId}
+    </select>
+
+    <delete id="deleteWish">
+        DELETE
+        FROM wishlist
+        WHERE user_id = #{userId}
+          AND content_id = #{contentId}
+    </delete>
+
+    <!--  찜 목록 가져오기  -->
+    <select id="getWishListWithUser" parameterType="string" resultType="map">
+        SELECT ai.*
+        FROM attraction_info ai
+        WHERE ai.content_id IN (SELECT content_id
+                                FROM wishlist
+                                WHERE user_id = #{userId});
+    </select>
+
+    <update id="addViewCount">
+        UPDATE attraction_info
+        SET readcount = readcount + 1
+        WHERE content_id = #{contentId}
+    </update>
+    <!--  찜 개수  -->
+    <select id="getWishCount" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM wishlist
+        WHERE content_id = #{contentId}
+    </select>
+
+    <!--  리뷰 개수  -->
+    <select id="getReviewCount" parameterType="int" resultType="Double">
+        select COALESCE(round(avg(rating), 1), 0)
+        from review
+        where content_id = #{contentId}
+    </select>
+
+    <!--  상위 5개 가져오기  -->
+    <select id="recommandAttractions">
+        SELECT *
+        FROM attraction_description ades
+        INNER JOIN attraction_info ai ON ades.content_id = ai.content_id
+        <if test="userId != null">
+            LEFT JOIN wishlist wl ON ai.content_id = wl.content_id AND wl.user_id = #{userId}
+        </if>
+        order by readcount desc
+        LIMIT 5
+    </select>
+
+</mapper>

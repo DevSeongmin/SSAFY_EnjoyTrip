@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.ssafy.enjoytrip.domain.member.mapper.MemberMapper">
+
+
+    <select id="login">
+        SELECT *
+        FROM members
+        WHERE user_id = #{userId}
+          AND user_password = #{userPassword}
+    </select>
+
+    <insert id="addMember">
+        insert into members (user_id, user_name, user_password, user_email)
+        values (#{userId}, #{userName}, #{userPassword}, #{userEmail})
+    </insert>
+
+    <select id="loadMember">
+        select user_id, user_name, user_password, grade, DATE_FORMAT(registration_date, '%Y-%m-%d') as registration_date
+        from members
+    </select>
+
+    <!-- 회원 정보 수정 -->
+    <update id="modifyMember">
+        UPDATE members
+        SET user_name     = #{userName},
+            user_password = #{userPassword}
+        WHERE user_id = #{userId}
+    </update>
+
+    <!-- 회원 탈퇴 -->
+    <delete id="deleteMember">
+        DELETE
+        FROM members
+        WHERE user_id = #{userId}
+    </delete>
+
+    <!-- 아이디 이메일 정보 확인 -->
+    <select id="MemberForChangePwd">
+        SELECT *
+        FROM members
+        WHERE user_id = #{userId} and user_email = #{userEmail}
+    </select>
+
+
+     <!-- 특정 회원 정보 -->
+    <select id="pickMember">
+        SELECT *
+        FROM members
+        WHERE user_id = #{userId}
+    </select>
+
+
+    <select id="findMember">
+        SELECT *
+        FROM members
+        WHERE user_id = #{userId}
+          and user_name = #{userName}
+    </select>
+
+
+</mapper>
