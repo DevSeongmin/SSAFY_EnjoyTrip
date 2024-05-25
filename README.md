@@ -46,6 +46,11 @@
 ## ERD   
 
 ![image](https://github.com/SeoungMinHwang/SSAFY_EnjoyTrip/assets/117965731/0a4b3d1e-e19f-4ea8-a803-83634d2102f0)
+<hr>
+
+## API 명세 
+
+![image](https://github.com/SeoungMinHwang/SSAFY_EnjoyTrip/assets/117965731/e325cba3-7617-4c16-be47-990ddd77499e)
 
 ![image](https://github.com/SeoungMinHwang/SSAFY_EnjoyTrip/assets/117965731/7d5f3756-2ca2-49ab-8389-b4032735e562)
 
@@ -53,12 +58,6 @@
 
 ![image](https://github.com/SeoungMinHwang/SSAFY_EnjoyTrip/assets/117965731/894d88ab-511d-4b3e-acd2-dabea42fbe18)
 
-
-<hr>
-
-## API 명세 
-
-![image](https://github.com/SeoungMinHwang/SSAFY_EnjoyTrip/assets/117965731/e325cba3-7617-4c16-be47-990ddd77499e)
 
 
 <hr>
