@@ -21,16 +21,16 @@
 
     <!--리뷰 등록 후 파일 정보 등록-->
     <insert id="registerFile">
-        INSERT INTO review_file_info (review_id, save_folder, original_file, save_file)
+        INSERT INTO review_file_info (review_id, original_file, img_url)
         values
         <foreach collection="fileInfos" item="fileinfo" separator=" , ">
-            (#{reviewId}, #{fileinfo.saveFolder}, #{fileinfo.originalFile}, #{fileinfo.saveFile})
+            (#{reviewId}, #{fileinfo.originalFile}, #{fileinfo.imgUrl})
         </foreach>
     </insert>
 
     <!--리뷰의 파일들 불러오기-->
     <select id="fileInfoList">
-        select save_folder, original_file, save_file
+        select original_file, img_url
         from review_file_info
         where review_id = #{reviewId}
     </select>

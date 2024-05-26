@@ -42,15 +42,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/posting")
 public class PostingController {
 
-	@Value("${file.path}")
-	private String uploadPath;
-
-	@Value("${file.path.upload-images}")
-	private String uploadImagePath;
-
-	@Value("${file.path.upload-files}")
-	private String uploadFilePath;
-
 	private final PostService postService;
 
 	@GetMapping("/")
@@ -103,64 +94,26 @@ public class PostingController {
 			throw new RuntimeException(e);
 		}
 	}
-
 	@PostMapping("/write")
 	public ResponseEntity<Void> write(
 		@Validated PostDto.Regist regist,
 		BindingResult bindingResult,
 		@RequestParam("upfile") MultipartFile[] files,
-		HttpSession session) throws
-		IOException {
+		HttpSession session) {
 
-		log.info("==============================={}======================================", regist);
-		log.info("==============================={}======================================",
-			((MemberEntity)session.getAttribute("memberDto")).getUserId());
+		String userId = ((MemberEntity)session.getAttribute("memberDto")).getUserId();
+		regist.setUserId(userId);
 
 		if (bindingResult.hasErrors()) {
-
 			log.info("error : {}", bindingResult.getAllErrors());
-
 			StringBuilder sb = new StringBuilder();
-
 			for (ObjectError error : bindingResult.getAllErrors()) {
 				sb.append(error.getDefaultMessage());
 			}
 		}
 
-		if (!files[0].isEmpty()) {
-			String today = new SimpleDateFormat("yyMMdd").format(new Date());
-			String saveFolder = uploadPath + File.separator + today;
-			log.debug("저장 폴더 : {}", saveFolder);
-			File folder = new File(saveFolder);
-			if (!folder.exists())
-				folder.mkdirs();
-			List<PostDto.FileInfo> fileInfos = new ArrayList<PostDto.FileInfo>();
-			for (MultipartFile mfile : files) {
-				PostDto.FileInfo fileInfoDto = PostDto.FileInfo.builder().build();
-				String originalFileName = mfile.getOriginalFilename();
-
-				log.info("==========================originalFileName : {}========================", originalFileName);
-
-				if (!originalFileName.isEmpty()) {
-					String saveFileName = UUID.randomUUID().toString().replace("-", "")
-						+ originalFileName.substring(originalFileName.lastIndexOf('.'));
-
-					log.info("==========================saveFileName : {}========================", saveFileName);
-					fileInfoDto.setSaveFolder(today);
-					fileInfoDto.setOriginalFile(originalFileName);
-					fileInfoDto.setSaveFile(saveFileName);
-					log.debug("원본 파일 이름 : {}, 실제 저장 파일 이름 : {}", mfile.getOriginalFilename(), saveFileName);
-					mfile.transferTo(new File(folder, saveFileName));
-				}
-				fileInfos.add(fileInfoDto);
-			}
-			regist.setFileInfos(fileInfos);
-		}
-
-		String userId = ((MemberEntity)session.getAttribute("memberDto")).getUserId();
-		regist.setUserId(userId);
 		try {
-			postService.registPost(regist);
+			postService.registPost(regist, files);
 			return ResponseEntity.ok().build();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -208,12 +161,10 @@ public class PostingController {
 
 	@DeleteMapping("{postId}")
 	public ResponseEntity<Void> deletePost(@PathVariable Integer postId, HttpSession session) {
-
 		PostDto.DeletePost deletePost = PostDto.DeletePost.builder()
 			.userId(((MemberEntity)session.getAttribute("memberDto")).getUserId())
 			.postId(postId)
 			.build();
-
 		try {
 			postService.deletePost(deletePost);
 			return ResponseEntity.ok().build();

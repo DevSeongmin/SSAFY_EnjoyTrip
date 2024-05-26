@@ -41,9 +41,8 @@ public class ReviewDto {
 	@Data
 	@Builder
 	public static class ReviewFileInfo {
-		private String saveFolder;
 		private String originalFile;
-		private String saveFile;
+		private String imgUrl;
 	}
 
 }

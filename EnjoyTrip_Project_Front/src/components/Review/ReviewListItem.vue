@@ -3,19 +3,10 @@
 import Score from '@/components/common/Score.vue'
 import userImgData from '@/api/userImgData';
 
-
-const props = defineProps({
+defineProps({
   data: Object
 })
 
-let imgPath = ''
-if (props.data.fileInfo.length > 0) {
-  imgPath =
-    'http://192.168.28.55/upload_img/' +
-    props.data.fileInfo[0].saveFolder +
-    '/' +
-    props.data.fileInfo[0].saveFile
-}
 </script>
 
 <template>
@@ -41,8 +32,8 @@ if (props.data.fileInfo.length > 0) {
     <div class="flex items-center">
 
 
-      <img v-if="imgPath !== ''" alt="Review Image" class="mr-4 rounded-md" height="100" :src="imgPath"
-        style="aspect-ratio: 100/100; object-fit: cover" width="100" />
+      <img v-if="data.fileInfo[0]" alt="Review Image" class="mr-4 rounded-md" height="100"
+        :src="data.fileInfo[0].imgUrl" style="aspect-ratio: 100/100; object-fit: cover" width="100" />
 
       <div class="flex-grow">
         <div class="flex justify-between">

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ssafy.enjoytrip.S3ImageService;
 import com.ssafy.enjoytrip.domain.member.entity.MemberEntity;
 import com.ssafy.enjoytrip.domain.review.dto.ReviewDto;
 import com.ssafy.enjoytrip.domain.review.entity.ReviewEntity;
@@ -36,15 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ReviewController {
 
 	private final ReviewService reviewService;
-
-	@Value("${file.path}")
-	private String uploadPath;
-
-	@Value("${file.path.upload-images}")
-	private String uploadImagePath;
-
-	@Value("${file.path.upload-files}")
-	private String uploadFilePath;
+	private final S3ImageService s3ImageService;
 
 	@GetMapping("/review/{content_id}")
 	public ResponseEntity<List<ReviewEntity>> getReviewList(@PathVariable("content_id") Integer contentId) {
@@ -66,44 +59,11 @@ public class ReviewController {
 		@RequestParam(value = "upfile", required = false) MultipartFile[] files,
 		HttpSession session) throws IOException {
 
-		log.info("=======================리뷰 작성========================");
-		log.info("리뷰 정보 : {}", regist);
-
-		if (files != null && !files[0].isEmpty()) {
-			String today = new SimpleDateFormat("yyMMdd").format(new Date());
-			String saveFolder = uploadPath + File.separator + today;
-			log.debug("저장 폴더 : {}", saveFolder);
-			File folder = new File(saveFolder);
-			if (!folder.exists())
-				folder.mkdirs();
-			List<ReviewDto.ReviewFileInfo> fileInfos = new ArrayList<ReviewDto.ReviewFileInfo>();
-			for (MultipartFile mfile : files) {
-				ReviewDto.ReviewFileInfo fileInfoDto = ReviewDto.ReviewFileInfo.builder().build();
-				String originalFileName = mfile.getOriginalFilename();
-
-				log.info("==========================originalFileName : {}========================", originalFileName);
-
-				if (!originalFileName.isEmpty()) {
-					String saveFileName = UUID.randomUUID().toString().replace("-", "")
-						+ originalFileName.substring(originalFileName.lastIndexOf('.'));
-
-					log.info("==========================saveFileName : {}========================", saveFileName);
-					fileInfoDto.setSaveFolder(today);
-					fileInfoDto.setOriginalFile(originalFileName);
-					fileInfoDto.setSaveFile(saveFileName);
-					log.debug("원본 파일 이름 : {}, 실제 저장 파일 이름 : {}", mfile.getOriginalFilename(), saveFileName);
-					mfile.transferTo(new File(folder, saveFileName));
-				}
-				fileInfos.add(fileInfoDto);
-			}
-			regist.setFileInfos(fileInfos);
-		}
-
 		String userId = ((MemberEntity)session.getAttribute("memberDto")).getUserId();
 		regist.setUserId(userId);
 
 		try {
-			reviewService.registReview(regist);
+			reviewService.registReview(regist, files);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

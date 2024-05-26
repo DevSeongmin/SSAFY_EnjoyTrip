@@ -9,23 +9,12 @@ const props = defineProps({
   board: Object
 })
 
-const imgPath = ref('')
-if (props.board && props.board.fileInfo && props.board.fileInfo.length > 0) {
-  imgPath.value = 'http://192.168.28.55/upload_img'
-  // imgPath.value = 'http://localhost/upload_img'
-  imgPath.value += '/' + props.board.fileInfo[0].saveFolder + '/' + props.board.fileInfo[0].saveFile
-}
 const boardDetail = () => {
   router.push({
     name: 'boardDetailView',
     params: { boardId: props.board.postId }
   })
 }
-
-const isImage = computed(() => {
-  const extension = imgPath.value.split('.').pop().toLowerCase()
-  return extension === 'jpg' || extension === 'jpeg' || extension === 'png' || extension === 'gif'
-})
 
 
 const userImg = computed(() => {
@@ -42,11 +31,8 @@ const userImg = computed(() => {
       <span class="sr-only">View</span>
     </a>
 
-    <img v-if="isImage" :src="imgPath" width="300" height="300" class="object-cover w-full h-60"
+    <img :src="board.fileInfo[0].imgUrl" width="300" height="300" class="object-cover w-full h-60"
       style="aspect-ratio: 300 / 300; object-fit: cover" />
-
-    <video v-if="!isImage" :src="imgPath" width="300" height="300" class="object-cover w-full h-60"
-      style="aspect-ratio: 300 / 300; object-fit: cover"></video>
 
     <div class="bg-white p-4 dark:bg-gray-950">
 

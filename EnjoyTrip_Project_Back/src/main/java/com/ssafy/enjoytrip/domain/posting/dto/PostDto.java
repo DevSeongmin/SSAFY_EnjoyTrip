@@ -88,10 +88,7 @@ public class PostDto {
 	@Data
 	@Builder
 	public static class FileInfo {
-		private String saveFolder;
 		private String originalFile;
-		private String saveFile;
-
+		private String imgUrl;
 	}
-
 }

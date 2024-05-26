@@ -20,14 +20,8 @@ const { attractionInfo } = storeToRefs(attractionInfoStore)
     <h1 class="text-3xl font-bold mb-4">방문하신 시설은 만족스러우셨나요?</h1>
 
     <div class="flex items-center space-x-6">
-      <img
-        alt="Place"
-        class="border rounded-lg"
-        height="300"
-        :src="attractionInfo.firstImage"
-        width="300"
-        style="aspect-ratio: 300 / 300; object-fit: cover"
-      />
+      <img alt="Place" class="border rounded-lg" height="300" :src="attractionInfo.firstImage" width="300"
+        style="aspect-ratio: 300 / 300; object-fit: cover" />
       <div>
         <!-- 장소이름  -->
         <h2 class="text-2xl font-bold">{{ attractionInfo.title }}</h2>
@@ -42,7 +36,7 @@ const { attractionInfo } = storeToRefs(attractionInfoStore)
         </p>
         <div class="mt-4 flex items-center space-x-1">
           <Score :score="reviewScore" />
-          <span class="text-sm text-gray-500">({{ reviewScore }})</span>
+          <span class="text-sm text-gray-500">({{ reviewScore.toFixed(1) }})</span>
         </div>
       </div>
     </div>

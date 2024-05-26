@@ -1,10 +1,13 @@
 package com.ssafy.enjoytrip.domain.posting.service;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.ssafy.enjoytrip.S3ImageService;
 import com.ssafy.enjoytrip.domain.posting.dto.PostDto;
 import com.ssafy.enjoytrip.domain.posting.entity.PostEntity;
 import com.ssafy.enjoytrip.domain.posting.mapper.PostingMapper;
@@ -18,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PostServiceImpl implements PostService {
 
 	private final PostingMapper postingMapper;
+	private final S3ImageService s3ImageService;
 
 	@Override
 	public List<PostEntity> getPostList() throws Exception {
@@ -53,7 +57,22 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public void registPost(PostDto.Regist regist) throws Exception {
+	public void registPost(PostDto.Regist regist, MultipartFile[] files) throws Exception {
+
+		if (!files[0].isEmpty()) {
+			List<PostDto.FileInfo> fileInfos = new ArrayList<PostDto.FileInfo>();
+			for (MultipartFile mfile : files) {
+				String profileImage = s3ImageService.upload(mfile);
+
+				PostDto.FileInfo fileInfoDto = PostDto.FileInfo.builder().build();
+				String originalFileName = mfile.getOriginalFilename();
+
+				fileInfoDto.setOriginalFile(originalFileName);
+				fileInfoDto.setImgUrl(profileImage);
+				fileInfos.add(fileInfoDto);
+			}
+			regist.setFileInfos(fileInfos);
+		}
 		try {
 			postingMapper.registPost(regist);
 		} catch (SQLException e) {
@@ -80,13 +99,22 @@ public class PostServiceImpl implements PostService {
 		try {
 			postingMapper.modifyPost(update);
 		} catch (SQLException e) {
-			log.info(" =========================================SERVICE modifyPost error");
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
 	public void deletePost(PostDto.DeletePost deletePost) throws Exception {
+
+
+		log.info(deletePost.toString());
+
+		postingMapper.fileInfoList(deletePost.getPostId()).forEach(fileInfo -> {
+			log.info(fileInfo.toString());
+			s3ImageService.deleteImageFromS3(fileInfo.getImgUrl());
+		});
+
+
 		try {
 			postingMapper.deletePost(deletePost);
 		} catch (SQLException e) {

@@ -3,6 +3,7 @@ package com.ssafy.enjoytrip.domain.posting.service;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.enjoytrip.domain.posting.dto.PostDto;
 import com.ssafy.enjoytrip.domain.posting.entity.PostEntity;
@@ -26,7 +27,7 @@ public interface PostService {
 
 	// 게시글 등록
 	@Transactional
-	void registPost(PostDto.Regist regist) throws Exception;
+	void registPost(PostDto.Regist regist, MultipartFile[] files) throws Exception;
 
 	// 게시글 수정
 	@Transactional

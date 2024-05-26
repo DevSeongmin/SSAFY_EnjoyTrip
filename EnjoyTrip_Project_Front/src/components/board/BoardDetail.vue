@@ -16,6 +16,7 @@ const props = defineProps({
   postId: Number
 })
 
+
 const userId = ref('')
 const memberDto = sessionStorage.getItem('memberDto')
 if (memberDto !== null) {
@@ -65,8 +66,8 @@ onMounted(async () => {
 
   objBoard.value = board.value
 
-  imgPath.value = 'http://192.168.28.55/upload_img'
-  // imgPath.value = 'http://localhost/upload_img'
+  // imgPath.value = 'http://192.168.28.55/upload_img'
+  imgPath.value = 'http://localhost/upload_img'
   imgPath.value +=
     '/' + objBoard.value.fileInfo[0].saveFolder + '/' + objBoard.value.fileInfo[0].saveFile
 })
@@ -80,7 +81,7 @@ const isImage = computed(() => {
 <template>
   <div v-if="!isLoading" class="grid gap-8 max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 mt-[70px]">
     <div class="grid gap-2">
-      <h1 class="text-3xl font-bold">{{ board.title }}</h1>
+      <h1 class="text-3xl font-bold">{{ board.title }} </h1>
       <div class="flex justify-between items-center gap-4 text-sm text-gray-500">
         <div class="flex items-center gap-4">
           <span class="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
@@ -110,10 +111,9 @@ const isImage = computed(() => {
       </div>
     </div>
 
-    <img v-if="isImage" :src="imgPath" alt="Autumn Leaves" width="1200" height="800"
+    <img :src="board.fileInfo[0].imgUrl" alt="Autumn Leaves" width="1200" height="800"
       class="rounded-lg object-cover w-full aspect-[3/2]" />
 
-    <video v-if="!isImage" :src="imgPath" controls></video>
 
     <div class="prose prose-lg max-w-none">
       <p>

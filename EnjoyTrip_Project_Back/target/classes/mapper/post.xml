@@ -33,16 +33,16 @@
 
     <!-- 게시글 등록 후 파일 정보 등록 -->
     <insert id="registerFile">
-        insert into file_info (post_id, save_folder, original_file, save_file)
+        insert into file_info (post_id, original_file, img_url)
         values
         <foreach collection="fileInfos" item="fileinfo" separator=" , ">
-            (#{postId}, #{fileinfo.saveFolder}, #{fileinfo.originalFile}, #{fileinfo.saveFile})
+            (#{postId},  #{fileinfo.originalFile}, #{fileinfo.imgUrl})
         </foreach>
     </insert>
 
     <!-- 게시글의 파일들 불러오기-->
     <select id="fileInfoList">
-        select save_folder, original_file, save_file
+        select original_file, img_url
         from file_info
         where post_id = #{articleNo}
     </select>
