@@ -38,7 +38,7 @@
 <hr>
 
 ## 웹 아키텍처
-![image](https://github.com/SeoungMinHwang/SSAFY_EnjoyTrip/assets/117965731/146d9a5b-e8e3-471a-b045-a0ad9f3ff1df)
+![image](https://github.com/SeoungMinHwang/SSAFY_EnjoyTrip/assets/117965731/aa78f7c3-32d3-4fbc-a73b-6f4d00ba1711)
 
 
 <hr>
