@@ -1,4 +1,4 @@
-![image](https://github.com/SeoungMinHwang/SSAFY_EnjoyTrip/assets/117965731/8db19a18-221d-48b2-999b-33ee1aad997a)## 👩‍💻 Enjoy Trip
+## 👩‍💻 Enjoy Trip
 
 <table align="center">
     <tr align="center">
